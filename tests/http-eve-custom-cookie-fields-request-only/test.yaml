@@ -1,0 +1,16 @@
+checks:
+
+  # Only the client->server side of the traffic is present (a single GET
+  # to bs.serving-sys.com). The Cookie header must still be logged from
+  # the request side alone, and no response_headers should ever appear
+  # since no response bytes exist in this pcap.
+  - filter:
+      count: 1
+      match:
+        event_type: http
+        http.hostname: bs.serving-sys.com
+        http.url: /BurstingPipe/adServer.bs?cn=rsb&c=28&pli=2163545&PluID=0&w=300&h=250&ord=270223555&ucm=true&ncu=$$$$
+        http.http_method: GET
+        http.request_headers[0].name: Cookie
+        http.request_headers[0].value: "ebNewBandWidth_.bs.serving-sys.com=2705%3A1294189024479; u3=1; C4=; eyeblaster=BWVal=2705&BWDate=40547.831632&debuglevel=&FLV=10.1103&RES=0&WMPV=0; A3=gPeaa8Uc07Hs00001fBVAaaAX04m400002fUFFa3jd02WG00001gwZSa88U0cdq00001; B3=84bg0000000001sP83cq0000000001sR7dQq0000000001sB7FOx0000000002sW; u2=c1f99b5f-247e-4b67-8dd3-1a6b5c7387153G208g"
+        not-has-key: http.response_headers

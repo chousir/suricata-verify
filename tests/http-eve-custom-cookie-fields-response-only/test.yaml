@@ -1,0 +1,17 @@
+checks:
+
+  # Only the server->client side of the traffic is present. The response
+  # (from bs.serving-sys.com, which sets 4 separate Set-Cookie headers)
+  # must still be logged as a libhtp "request_uri_not_seen" pseudo
+  # transaction, since libhtp never sees a matching request in this
+  # pcap. No request_headers should ever appear.
+  - filter:
+      count: 1
+      match:
+        event_type: http
+        http.url: /libhtp::request_uri_not_seen
+        http.status: 200
+        http.http_content_type: text/html
+        http.response_headers[0].name: Set-Cookie
+        http.response_headers[0].value: "eyeblaster=BWVal=2705&BWDate=40547.831632&debuglevel=&FLV=10.1103&RES=0&WMPV=0; expires=Mon, 25-Apr-2011 13:53:39 GMT; domain=bs.serving-sys.com; path=/, A3=gPeaa8Uc07Hs00001fBVAaaAW04m400002fUFFa3jd02WG00001gTO.aaC109AI00001gwZSa88U0cdq00001; expires=Mon, 25-Apr-2011 13:53:39 GMT; domain=.serving-sys.com; path=/, B3=84bg0000000001sP83cq0000000001sR7dQq0000000001sB8gdp0000000001sW7FOx0000000002sW; expires=Mon, 25-Apr-2011 13:53:39 GMT; domain=.serving-sys.com; path=/, u2=c1f99b5f-247e-4b67-8dd3-1a6b5c7387153G208g; expires=Mon, 25-Apr-2011 13:53:39 GMT; domain=.serving-sys.com; path=/"
+        not-has-key: http.request_headers

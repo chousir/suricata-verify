@@ -1,0 +1,19 @@
+%YAML 1.1
+---
+
+include: ../../etc/suricata-4.0.3.yaml
+
+outputs:
+  - eve-log:
+      enabled: yes
+      types:
+        - http:
+            extended: yes
+            custom: [Cookie, Set-Cookie]
+
+# Only one side of the traffic is present in this pcap, so let the
+# stream engine track/reassemble it instead of dropping it.
+stream:
+  midstream: true
+  inline: yes
+  async-oneside: true
