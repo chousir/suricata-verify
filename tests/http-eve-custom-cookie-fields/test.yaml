@@ -1,0 +1,20 @@
+pcap: ../http-sticky-server/http-sticky-server.pcap
+
+checks:
+
+  # Every HTTP transaction with a request "Cookie" header must have it
+  # parsed into request_headers, since "Cookie" is not covered by
+  # "extended" logging.
+  - filter:
+      count: 461
+      match:
+        event_type: http
+        http.request_headers[0].name: Cookie
+
+  # Every HTTP transaction with a response "Set-Cookie" header must have
+  # it parsed into response_headers.
+  - filter:
+      count: 61
+      match:
+        event_type: http
+        http.response_headers[0].name: Set-Cookie
