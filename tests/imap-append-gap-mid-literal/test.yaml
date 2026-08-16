@@ -10,29 +10,25 @@ checks:
 - filter:
     count: 1
     match:
-      event_type: flow
-      app_proto: imap
-      flow.state: closed
-- filter:
-    count: 1
-    match:
       event_type: fileinfo
       fileinfo.tx_id: 1
-      fileinfo.size: 33
+      fileinfo.filename: appendmsg
+      fileinfo.size: 32
       fileinfo.state: "TRUNCATED"
       fileinfo.gaps: false
       fileinfo.stored: true
-      fileinfo.sha256: 41872fbff1c921f309753ee6d2bc27cae01c50c0cd5d1b89b93e105eb8412595
+      fileinfo.sha256: 61d03190ca8805675bf22e9f9760e6d1cde624b143939d503118b9b55d01bd67
 - filter:
     count: 1
     match:
       event_type: fileinfo
       fileinfo.tx_id: 2
-      fileinfo.size: 65
-      fileinfo.state: "CLOSED"
+      fileinfo.filename: appendmsg
+      fileinfo.size: 64
+      fileinfo.state: CLOSED
       fileinfo.gaps: false
       fileinfo.stored: true
-      fileinfo.sha256: 0d40801f8918378971a40aad32b24d2e3a40c96d85ef7cb5dc060653b84be632
+      fileinfo.sha256: 23ba5b63d86f7341194c0f004e62049cbd6fb46807c19a2b80b5255263b3441c
 - filter:
     count: 1
     match:

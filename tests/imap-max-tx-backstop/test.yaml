@@ -1,0 +1,30 @@
+requires:
+  min-version: 8
+
+# 20 LOGIN commands packed into a single client->server segment, none ever
+# getting a response. app-layer.protocols.imap.max-tx is lowered so this
+# small capture actually reaches the limit.
+args:
+- -k none
+- --set app-layer.protocols.imap.enabled=yes
+- --set app-layer.protocols.imap.max-tx=5
+
+checks:
+- filter:
+    count: 1
+    match:
+      event_type: flow
+      app_proto: imap
+      flow.state: closed
+      flow.tx_cnt: 6
+- filter:
+    count: 14
+    match:
+      event_type: anomaly
+      anomaly.app_proto: imap
+      anomaly.event: too_many_transactions
+- filter:
+    count: 1
+    match:
+      event_type: stats
+      stats.app_layer.error.imap.parser: 0

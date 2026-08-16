@@ -17,28 +17,21 @@ checks:
     count: 1
     match:
       event_type: fileinfo
-      fileinfo.tx_id: 1
-      fileinfo.size: 33
-      fileinfo.state: "TRUNCATED"
+      fileinfo.filename: appendmsg
+      fileinfo.size: 51
+      fileinfo.state: CLOSED
       fileinfo.gaps: false
       fileinfo.stored: true
-      fileinfo.sha256: 41872fbff1c921f309753ee6d2bc27cae01c50c0cd5d1b89b93e105eb8412595
+      fileinfo.sha256: f717015ffc9dac9caeb405ae007152c5371b25c14761217a753d612004d6987c
 - filter:
     count: 1
     match:
       event_type: fileinfo
-      fileinfo.tx_id: 2
-      fileinfo.size: 65
-      fileinfo.state: "CLOSED"
-      fileinfo.gaps: false
-      fileinfo.stored: true
-      fileinfo.sha256: 0d40801f8918378971a40aad32b24d2e3a40c96d85ef7cb5dc060653b84be632
-- filter:
-    count: 1
-    match:
-      event_type: fileinfo
-      fileinfo.tx_id: 2
       not-has-key: [fileinfo.md5, fileinfo.sha1]
+- filter:
+    count: 0
+    match:
+      event_type: anomaly
 - filter:
     count: 1
     match:

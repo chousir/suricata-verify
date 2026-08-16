@@ -1,0 +1,40 @@
+requires:
+  min-version: 8
+
+# One-sided (asynchronous) IMAP capture: only the client->server direction
+# is present (as with asymmetric routing or a one-sided tap), so the LOGIN
+# and APPEND's tagged replies -- and every other server byte -- are never
+# seen. Proves the parser still completes the APPEND file extraction (and
+# doesn't error out) when a whole direction of the flow never arrives.
+args:
+- -k none
+- --set app-layer.protocols.imap.enabled=yes
+- --set stream.async-oneside=true
+- --set outputs.6.file-store.enabled=yes
+
+checks:
+- filter:
+    count: 1
+    match:
+      event_type: flow
+      app_proto: imap
+      flow.state: closed
+- filter:
+    count: 1
+    match:
+      event_type: fileinfo
+      fileinfo.filename: appendmsg
+      fileinfo.size: 51
+      fileinfo.state: CLOSED
+      fileinfo.gaps: false
+      fileinfo.stored: true
+      fileinfo.sha256: f717015ffc9dac9caeb405ae007152c5371b25c14761217a753d612004d6987c
+- filter:
+    count: 0
+    match:
+      event_type: anomaly
+- filter:
+    count: 1
+    match:
+      event_type: stats
+      stats.app_layer.error.imap.parser: 0
