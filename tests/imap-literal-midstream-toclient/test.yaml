@@ -5,7 +5,7 @@ args:
 - -k none
 - --set app-layer.protocols.imap.enabled=yes
 - --set stream.midstream=true
-- --set stream.midstream-policy=pass-flow
+- --set outputs.6.file-store.enabled=yes
 
 checks:
 - filter:
@@ -15,6 +15,7 @@ checks:
       fileinfo.size: 16
       fileinfo.state: CLOSED
       fileinfo.sha256: 295c324b03ae507d259019b94c8db2e4ac099eb8b2b84c9fa744b728f206e0d3
+      fileinfo.stored: true
 - filter:
     count: 1
     match:

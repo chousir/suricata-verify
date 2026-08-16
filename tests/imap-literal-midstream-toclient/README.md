@@ -21,8 +21,22 @@ the *other* side appears - so the server's first (and only) data packet
 gets rejected as out-of-window before app-layer ever sees it (confirmed
 by direct debugging of `src/stream-tcp.c`). `stream.midstream`, entered
 via a bare SYN/ACK, correctly learns the server's window up front and is
-used here instead, together with `stream.midstream-policy=pass-flow` to
-permit the pickup (the default `midstream-policy` does not).
+used here instead.
+
+Note: `stream.midstream-policy=pass-flow` is *not* needed alongside
+`stream.midstream=true` -- in IDS mode with no global `exception-policy`
+override, the default midstream policy already resolves to
+`EXCEPTION_POLICY_NOT_SET`, which `src/stream-tcp.c`'s SYN/ACK pickup
+gate (`!(midstream_policy == NOT_SET || midstream_policy == PASS_FLOW)`)
+already treats as permissive -- verified empirically (this test passes
+identically without the `midstream-policy` override). Setting
+`pass-flow` explicitly is actively counterproductive here: its handler
+in `src/util-exception-policy.c`'s `ExceptionPolicyApply()` sets
+`FLOW_ACTION_PASS` and disables packet/payload inspection for the flow,
+which silently prevents the `filestore` rule keyword from ever firing
+(confirmed: `fileinfo.stored` stays `false` with `pass-flow` set, `true`
+without it). An earlier version of this test carried the unnecessary
+`pass-flow` override and skipped filestore verification as a result.
 
 # PCAP
 
