@@ -3,6 +3,8 @@ requires:
 
 args:
 - -k none
+- --set app-layer.protocols.imap.enabled=yes
+- --set outputs.6.file-store.enabled=yes
 
 checks:
 - filter:
@@ -23,3 +25,43 @@ checks:
       proto: TCP
       src_ip: 131.151.32.21
       src_port: 4167
+# The capture contains 26 real FETCH literal responses (13 unique
+# messages, each fetched twice by the client). Verifying the parser
+# actually runs on real-world traffic and extracts every one of them
+# -- this test used to only exercise protocol detection, never the
+# Rust parser itself, since app-layer.protocols.imap.enabled defaults
+# to detection-only.
+- filter:
+    count: 26
+    match:
+      event_type: fileinfo
+      fileinfo.state: CLOSED
+      fileinfo.stored: true
+- filter:
+    count: 26
+    match:
+      event_type: fileinfo
+      not-has-key: [fileinfo.md5, fileinfo.sha1]
+- filter:
+    count: 1
+    match:
+      event_type: fileinfo
+      fileinfo.tx_id: 1
+      fileinfo.size: 303
+      fileinfo.sha256: e796c8102010686d19bf820725aa8fdd258742f44b92dd2b966593fce889e0c0
+- filter:
+    count: 1
+    match:
+      event_type: fileinfo
+      fileinfo.tx_id: 14
+      fileinfo.size: 3339
+      fileinfo.sha256: 40c43b02de4e35f80521b3739bd35e3b22851799c54c43168131124db013d378
+- filter:
+    count: 0
+    match:
+      event_type: anomaly
+- filter:
+    count: 1
+    match:
+      event_type: stats
+      stats.app_layer.error.imap.parser: 0

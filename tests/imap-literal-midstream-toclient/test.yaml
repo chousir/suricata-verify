@@ -14,6 +14,12 @@ checks:
       event_type: fileinfo
       fileinfo.size: 16
       fileinfo.state: CLOSED
+      fileinfo.sha256: 295c324b03ae507d259019b94c8db2e4ac099eb8b2b84c9fa744b728f206e0d3
+- filter:
+    count: 1
+    match:
+      event_type: fileinfo
+      not-has-key: [fileinfo.md5, fileinfo.sha1]
 - filter:
     count: 0
     match:

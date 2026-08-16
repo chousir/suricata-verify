@@ -4,6 +4,7 @@ requires:
 args:
 - -k none
 - --set app-layer.protocols.imap.enabled=yes
+- --set outputs.6.file-store.enabled=yes
 
 checks:
 - filter:
@@ -18,6 +19,13 @@ checks:
       event_type: fileinfo
       fileinfo.size: 7
       fileinfo.state: CLOSED
+      fileinfo.sha256: 46b442e8ded8da4e18e9b1d019adf898fe67f365b098135cbc7e844fea5efa1f
+      fileinfo.stored: true
+- filter:
+    count: 1
+    match:
+      event_type: fileinfo
+      not-has-key: [fileinfo.md5, fileinfo.sha1]
 - filter:
     count: 0
     match:

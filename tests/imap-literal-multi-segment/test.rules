@@ -1,0 +1,1 @@
+alert imap any any -> any any (msg:"imap file extraction test"; filestore; noalert; sid:1; rev:1;)
