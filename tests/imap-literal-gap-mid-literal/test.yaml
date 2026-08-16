@@ -1,0 +1,35 @@
+requires:
+  min-version: 8
+
+args:
+- -k none
+- --set app-layer.protocols.imap.enabled=yes
+
+checks:
+- filter:
+    count: 1
+    match:
+      event_type: flow
+      app_proto: imap
+      flow.state: closed
+- filter:
+    count: 1
+    match:
+      event_type: fileinfo
+      fileinfo.tx_id: 1
+      fileinfo.size: 33
+      fileinfo.state: "TRUNCATED"
+      fileinfo.gaps: false
+- filter:
+    count: 1
+    match:
+      event_type: fileinfo
+      fileinfo.tx_id: 2
+      fileinfo.size: 65
+      fileinfo.state: "CLOSED"
+      fileinfo.gaps: false
+- filter:
+    count: 1
+    match:
+      event_type: stats
+      stats.app_layer.error.imap.parser: 0
